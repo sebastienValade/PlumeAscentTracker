@@ -3,7 +3,7 @@ Name of program:
 
 
 Name of manuscript:
-	Plume Ascent Tracker: interactive Matlab software for analysis of explosion plumes in image data
+	Plume Ascent Tracker: interactive Matlab software for analysis of ascending plumes in image data
 	
 Name of authors:
 	S. A. Valade (1)*, A.J.L. Harris (1), M. Cerminara (2)
