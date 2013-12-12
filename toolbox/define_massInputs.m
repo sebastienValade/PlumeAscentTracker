@@ -22,7 +22,7 @@ function varargout = define_massInputs(varargin)
 
 % Edit the above text to modify the response to help define_massInputs
 
-% Last Modified by GUIDE v2.5 14-May-2013 13:21:29
+% Last Modified by GUIDE v2.5 05-Dec-2013 12:26:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -77,6 +77,17 @@ if isfield(H, 'inputs_massParam')
     if isfield(H.inputs_massParam, 'tempAtm_val')
         set(handles.tempAtm_val,'string',num2str(H.inputs_massParam.tempAtm_val))
         set([handles.tempAtm_val; handles.tempAtm_txt],'enable','on');
+    end
+    if isfield(H.inputs_massParam, 'tempAtm_incK')
+        if H.inputs_massParam.tempAtm_incK == 0
+            set(handles.increment_value,'string',num2str(H.inputs_massParam.tempAtm_incK))
+            set(handles.increment_optn,'value',0)
+            set(handles.increment_value,'enable','off');
+        else
+            set(handles.increment_value,'string',num2str(H.inputs_massParam.tempAtm_incK -273.15))
+            set([handles.increment_optn; handles.increment_value],'enable','on');
+            set(handles.increment_optn,'value',1)
+        end
     end
     
     %set temperature air
@@ -514,12 +525,55 @@ function tempAtm_panel_SelectionChangeFcn(hObject, eventdata, handles)
 selectionTag = get(eventdata.NewValue,'tag');
 
 h = [handles.tempAtm_val; handles.tempAtm_txt];
+h_inc = [handles.increment_optn, handles.increment_value];
 
 switch selectionTag
     case 'tempAtm_stdAtm'
         set(h,'enable','off')
+        set(handles.increment_optn,'enable','on')
+        if get(handles.increment_optn,'value')
+            set(handles.increment_value,'enable','on');
+        else
+            set(handles.increment_value,'enable','off');
+        end
     case 'tempAtm_cst'
         set(h,'enable','on')
+        set(h_inc,'enable','off');
+end
+
+% --- Executes on button press in increment_optn.
+function increment_optn_Callback(hObject, eventdata, handles)
+% hObject    handle to increment_optn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of increment_optn
+
+if get(hObject,'value')
+    set(handles.increment_value,'enable','on');
+else
+    set(handles.increment_value,'enable','off');
+end
+        
+function increment_value_Callback(hObject, eventdata, handles)
+% hObject    handle to increment_value (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of increment_value as text
+%        str2double(get(hObject,'String')) returns contents of increment_value as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function increment_value_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to increment_value (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
 
 
@@ -579,6 +633,13 @@ h_sel=get(handles.tempAtm_panel,'SelectedObject');
 inputs_massParam.temp_atm2use = get(h_sel,'tag');
 if strcmp(inputs_massParam.temp_atm2use,'tempAtm_cst')
     inputs_massParam.tempAtm_val = str2double(get(handles.tempAtm_val,'String'));
+end
+if strcmp(inputs_massParam.temp_atm2use,'tempAtm_stdAtm')
+    if get(handles.increment_optn,'value')
+        inputs_massParam.tempAtm_incK = 273.15 + str2double(get(handles.increment_value,'String'));
+    else
+        inputs_massParam.tempAtm_incK = 0;
+    end
 end
 
 %get temperature of heated air  to use

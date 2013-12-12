@@ -59,6 +59,7 @@ switch temp_atm2use
         %NB: atmosisa.m = function in aerospace toolbox => use instead function stdatmo.m which is shared by matlab user & which uses the same atmosphere model as atmosisa
         altitude_plumeCentroid = ventAlt_m + plumeInfo_centroidM;
         [~,~,tempAtm_K,~,~]=stdatmo(altitude_plumeCentroid);
+        tempAtm_K = tempAtm_K + tempAtm_incK;
     case 'tempAtm_cst'
         tempAtm_K = tempAtm_val +273.15;
 end
